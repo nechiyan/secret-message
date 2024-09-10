@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Message</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffe6e9;
+    }
+
+    /* Container for both screens */
+    .container {
+      display: none;
+      text-align: center;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    /* Initially visible container */
+    .initial-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #ff4d6d;
+    }
+
+    .button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 1rem;
+      color: white;
+      background-color: #ff4d6d;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #ff1a75;
+    }
+
+    /* Styles for the love animation page (previous code reused) */
+    .love-page {
+      position: relative;
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+      opacity: 0;
+    }
+
+    /* Heart Drawing SVG */
+    .heart-container {
+      display: inline-block;
+      width: 150px;
+      height: 150px;
+      cursor: pointer;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .path {
+      stroke: #ff4d6d;
+      stroke-width: 5;
+      stroke-dasharray: 480;
+      stroke-dashoffset: 480;
+      fill: none;
+      animation: draw 2s ease forwards;
+    }
+
+    @keyframes draw {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .heart-container:hover svg .path {
+      animation: pulse 1s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .message {
+      font-size: 1.8rem;
+      color: #ff1a75;
+      margin-top: 20px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeIn 3s forwards ease;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .emoji {
+      font-size: 2.5rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+
+    .show-emoji {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .emoji-burst {
+      position: absolute;
+      font-size: 1.5rem;
+      color: #ff4d6d;
+      opacity: 0;
+      animation: burst 1.5s ease-in-out forwards;
+    }
+
+    @keyframes burst {
+      0% {
+        transform: scale(0) translate(-50%, -50%);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.5) translate(-50%, -50%);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive styles */
+    @media (max-width: 480px) {
+      .love-page {
+        max-width: 90%;
+      }
+
+      .heart-container {
+        width: 120px;
+        height: 120px;
+      }
+
+      .emoji {
+        font-size: 2rem;
+      }
+
+      .message {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Initial page -->
+  <div class="initial-container">
+    <h1>Navas wants to tell you something secret...!</h1>
+    <button class="button" id="revealButton">Click to reveal</button>
+  </div>
+
+  <!-- Love animation page (hidden initially) -->
+  <div class="container love-page" id="lovePage">
+    <div class="heart-container" id="heartContainer">
+      <svg viewBox="0 0 100 100">
+        <path class="path" d="M50 30 
+          C 35 10, 0 25, 25 60 
+          Q 50 90, 75 60 
+          C 100 25, 65 10, 50 30 Z" />
+      </svg>
+      <div class="emoji" id="emoji">💖</div>
+    </div>
+    <div class="message">love you, Aaliya!</div>
+  </div>
+
+  <script>
+    // Elements
+    const revealButton = document.getElementById('revealButton');
+    const lovePage = document.getElementById('lovePage');
+    const initialContainer = document.querySelector('.initial-container');
+    const heartContainer = document.getElementById('heartContainer');
+    const emoji = document.getElementById('emoji');
+
+    // Show love animation page when button is clicked
+    revealButton.addEventListener('click', () => {
+      initialContainer.style.display = 'none'; // Hide the initial page
+      lovePage.style.display = 'block'; // Show the love animation page
+      setTimeout(() => {
+        lovePage.style.opacity = 1; // Fade in the love page
+      }, 100);
+    });
+
+    // Heart and emoji burst interaction
+    heartContainer.addEventListener('click', () => {
+      emoji.classList.add('show-emoji');
+      for (let i = 0; i < 6; i++) {
+        const burstEmoji = document.createElement('div');
+        burstEmoji.classList.add('emoji-burst');
+        burstEmoji.style.top = `${50 + Math.random() * 30 - 15}%`;
+        burstEmoji.style.left = `${50 + Math.random() * 30 - 15}%`;
+        burstEmoji.innerHTML = '💖';
+        heartContainer.appendChild(burstEmoji);
+        setTimeout(() => burstEmoji.remove(), 1500);
+      }
+      setTimeout(() => {
+        emoji.classList.remove('show-emoji');
+      }, 1000);
+    });
+  </script>
+
+</body>
+</html>
